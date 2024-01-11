@@ -33,25 +33,61 @@ class Pendu:
         ]
         return random.choice(mots)
 
-    def lettre_existe(self,lettre_trouve,mot_secret):
+    def lettre_existe(self,lettre_trouvee,mot_secret):
         liste_mot_secret = list(mot_secret)
-        pos = np.where(np.array(liste_mot_secret) == lettre_trouve)[0]
-
+        pos = np.where(np.array(liste_mot_secret) == np.array(list(lettre_trouvee)))[0]
         return pos
 
-    def demasque_mot(self, lettre_trouve, mot_secret, mot_masque):
-        indice_lettre_trouver = self.lettre_existe(lettre_trouve, mot_secret)
-        for i in range(len(indice_lettre_trouver)):
-                mot_masque[indice_lettre_trouver[i]] = lettre_trouve[i]
+    def demasque_mot(self, lettre_trouvee, mot_secret, mot_masque):
+        indice_lettre_trouvee = self.lettre_existe(lettre_trouvee, mot_secret)
+        for i in range(len(indice_lettre_trouvee)):
+                mot_masque[indice_lettre_trouvee[i]] = lettre_trouvee
 
         return mot_masque
 
+    def enlever_tentative_si_faux(self, lettre_trouvee, mot_secret, mot_masque,nombre_tentative):
+        indice_lettre_trouvee = self.lettre_existe(lettre_trouvee, mot_secret)
+        if len(indice_lettre_trouvee) == 0:
+            nombre_tentative -= 1
+        return nombre_tentative
+
+    def verifier_si_mot_decouvert(self,mot_masque,mot_secret):
+        if mot_secret in mot_masque:
+            return True
+        else:
+            return False
+
+    def verifier_si_lettre_deja_devine(self,lettre_trouvee,toutes_lettres_devinee):
+        if lettre_trouvee in toutes_lettres_devinee:
+            return True
+        else:
+            return False
+
+    def pendu(self):
+        mot_secret = "jouet"
+        mot_masque = ["_"]*len(mot_secret)
+        nombre_tentative = 10
+        lettre_trouvee = []
+        toutes_lettres_devinee = []
+        print("Bienvenue au jeu du pendu!")
+        print("Mot actuel :", "_"*len(mot_secret))
+
+        while nombre_tentative > 0 and "_" in mot_masque:
+            lettre = input("Devinez une lettre : ").lower()
+
+            if self.verifier_si_lettre_deja_devine(lettre_trouvee,toutes_lettres_devinee):
+                print("Vous avez déjà deviné cette lettre. Essayez une autre.")
+                continue
+
+            toutes_lettres_devinee.append(lettre)
+
+            if self.lettre_existe(lettre_trouvee,mot_secret):
+                print("Bonne devinette !")
+            else:
+                print("Mauvaise devinette.")
+                self.enlever_tentative_si_faux(lettre_trouvee, mot_secret, mot_masque,nombre_tentative)
 
 
 if __name__ == '__main__':
     jeu_pendu = Pendu()
-    lettre_trouver = "o"
-    lettre_trouver = lettre_trouver.lower()
-    mot_secret = "soleil"
-    mot_masque = ["_"]*len(mot_secret)
-    print(jeu_pendu.demasque_mot(lettre_trouver,mot_secret,mot_masque))
+    jeu_pendu.pendu()
