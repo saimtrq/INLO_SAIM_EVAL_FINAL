@@ -33,59 +33,70 @@ class Pendu:
         ]
         return random.choice(mots)
 
-    def lettre_existe(self,lettre_trouvee,mot_secret):
-        liste_mot_secret = list(mot_secret)
-        pos = np.where(np.array(liste_mot_secret) == np.array(list(lettre_trouvee)))[0]
-        return pos
-
-    def demasque_mot(self, lettre_trouvee, mot_secret, mot_masque):
-        indice_lettre_trouvee = self.lettre_existe(lettre_trouvee, mot_secret)
-        for i in range(len(indice_lettre_trouvee)):
-                mot_masque[indice_lettre_trouvee[i]] = lettre_trouvee
-
-        return mot_masque
-
-    def enlever_tentative_si_faux(self, lettre_trouvee, mot_secret, mot_masque,nombre_tentative):
-        indice_lettre_trouvee = self.lettre_existe(lettre_trouvee, mot_secret)
-        if len(indice_lettre_trouvee) == 0:
-            nombre_tentative -= 1
-        return nombre_tentative
-
-    def verifier_si_mot_decouvert(self,mot_masque,mot_secret):
-        if mot_secret in mot_masque:
+    def lettre_existe(self, lettre, mot_secret):
+        if lettre in mot_secret:
             return True
         else:
             return False
 
-    def verifier_si_lettre_deja_devine(self,lettre_trouvee,toutes_lettres_devinee):
-        if lettre_trouvee in toutes_lettres_devinee:
+    def afficher_mot_masque(self,mot_secret, lettres_trouvees):
+        mot_masque = ""
+        for lettre in mot_secret:
+            if lettre in lettres_trouvees:
+                mot_masque += lettre
+            else:
+                mot_masque += "_"
+        return mot_masque
+
+    def enlever_tentative_si_faux(self, lettre, mot_secret,tentatives_restantes):
+        mot_list = list(mot_secret)
+        if lettre not in mot_list:
+            tentatives_restantes -= 1
+        return tentatives_restantes
+
+    def verifier_si_mot_decouvert(self,mot_secret,lettres_trouvees):
+        if "_" in self.afficher_mot_masque(mot_secret,lettres_trouvees):
+            return False
+        else:
+            return True
+
+    def verifier_si_lettre_deja_devine(self,lettre,lettres_trouvees):
+        if lettre in lettres_trouvees:
             return True
         else:
             return False
 
     def pendu(self):
-        mot_secret = "jouet"
-        mot_masque = ["_"]*len(mot_secret)
-        nombre_tentative = 10
-        lettre_trouvee = []
-        toutes_lettres_devinee = []
-        print("Bienvenue au jeu du pendu!")
-        print("Mot actuel :", "_"*len(mot_secret))
+        mot_secret = self.choisir_mot()
+        lettres_trouvees = []
+        tentatives_restantes = 10
 
-        while nombre_tentative > 0 and "_" in mot_masque:
+        print("Bienvenue au jeu du pendu!")
+        print("Mot actuel :", self.afficher_mot_masque(mot_secret, lettres_trouvees))
+
+        while tentatives_restantes > 0 and "_" in self.afficher_mot_masque(mot_secret, lettres_trouvees):
             lettre = input("Devinez une lettre : ").lower()
 
-            if self.verifier_si_lettre_deja_devine(lettre_trouvee,toutes_lettres_devinee):
+            if self.verifier_si_lettre_deja_devine(lettre,lettres_trouvees):
                 print("Vous avez déjà deviné cette lettre. Essayez une autre.")
                 continue
 
-            toutes_lettres_devinee.append(lettre)
+            lettres_trouvees.append(lettre)
 
-            if self.lettre_existe(lettre_trouvee,mot_secret):
+            if self.lettre_existe(lettre,mot_secret):
                 print("Bonne devinette !")
             else:
                 print("Mauvaise devinette.")
-                self.enlever_tentative_si_faux(lettre_trouvee, mot_secret, mot_masque,nombre_tentative)
+                tentatives_restantes = self.enlever_tentative_si_faux(lettre, mot_secret, tentatives_restantes)
+
+            print("Mot actuel :", self.afficher_mot_masque(mot_secret, lettres_trouvees))
+            print("Lettres déjà devinées :", ", ".join(lettres_trouvees))
+            print("Tentatives restantes :", tentatives_restantes)
+
+        if self.verifier_si_mot_decouvert(mot_secret,lettres_trouvees):
+            print("Félicitations ! Vous avez deviné le mot :", mot_secret)
+        elif not self.verifier_si_mot_decouvert(mot_secret,lettres_trouvees) and tentatives_restantes == 0 :
+            print("Désolé, vous avez épuisé toutes vos tentatives. Le mot était :", mot_secret)
 
 
 if __name__ == '__main__':

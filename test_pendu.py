@@ -11,73 +11,68 @@ class TestPendu(unittest.TestCase):
 
     def test_si_lettre_existe_dans_mot(self):
         jeu_pendu = Pendu()
-        lettre_trouver = "l"
+        lettre = "l"
         mot_secret = "soleil"
-        self.assertTrue(np.array_equal(jeu_pendu.lettre_existe(lettre_trouver, mot_secret), [2, 5]))
+        self.assertTrue(jeu_pendu.lettre_existe(lettre, mot_secret))
 
     def test_si_lettre_existe_pas_dans_mot(self):
         jeu_pendu = Pendu()
-        lettre_trouver = "z"
+        lettres_trouvees = "z"
         mot_secret = "soleil"
-        self.assertTrue(np.array_equal(jeu_pendu.lettre_existe(lettre_trouver, mot_secret), []))
+        self.assertFalse(jeu_pendu.lettre_existe(lettres_trouvees, mot_secret))
 
     def test_si_mot_se_demasque_une_lettre(self):
         jeu_pendu = Pendu()
-        lettre_trouver = "s"
+        lettres_trouvees = "s"
         mot_secret = "soleil"
-        mot_masque =["_"]*len(mot_secret)
-        self.assertEqual(jeu_pendu.demasque_mot(lettre_trouver, mot_secret, mot_masque),['s', '_', '_', '_', '_', '_'])
+        self.assertEqual(jeu_pendu.afficher_mot_masque(mot_secret, lettres_trouvees,),"s_____")
 
     def test_si_mot_se_demasque_deux_lettre(self):
         jeu_pendu = Pendu()
-        lettre_trouver = "l"
+        lettres_trouveese = "l"
         mot_secret = "soleil"
-        mot_masque =["_"]*len(mot_secret)
-        self.assertEqual(jeu_pendu.demasque_mot(lettre_trouver, mot_secret, mot_masque),['_', '_', 'l', '_', '_', 'l'])
+        self.assertEqual(jeu_pendu.afficher_mot_masque(mot_secret, lettres_trouveese,),"__l__l")
     def test_si_mot_se_demasque_aucune_lettre(self):
         jeu_pendu = Pendu()
-        lettre_trouver = ""
+        lettres_trouveese = "z"
         mot_secret = "soleil"
-        mot_masque =["_"]*len(mot_secret)
-        self.assertEqual(jeu_pendu.demasque_mot(lettre_trouver, mot_secret, mot_masque),['_', '_', '_', '_', '_', '_'])
+        self.assertEqual(jeu_pendu.afficher_mot_masque(mot_secret, lettres_trouveese,),"______")
 
 
     def test_si_tentative_echoue_enleve_nombre(self):
         jeu_pendu = Pendu()
-        lettre_trouver = "v"
+        lettre= "a"
         mot_secret = "soleil"
-        mot_masque = ["_"] * len(mot_secret)
-        nombre_tentative = 10
-        self.assertEqual(jeu_pendu.enlever_tentative_si_faux(lettre_trouver, mot_secret, mot_masque,nombre_tentative), 9)
+        tentatives_restantes = 10
+        self.assertEqual(jeu_pendu.enlever_tentative_si_faux(lettre, mot_secret,tentatives_restantes), 9)
 
     def test_si_tentative_echoue_enleve_pas_nombre(self):
         jeu_pendu = Pendu()
-        lettre_trouver = "s"
+        lettre = "s"
         mot_secret = "soleil"
-        mot_masque = ["_"] * len(mot_secret)
-        nombre_tentative = 10
-        self.assertEqual(jeu_pendu.enlever_tentative_si_faux(lettre_trouver, mot_secret, mot_masque, nombre_tentative),10)
+        tentatives_restantes = 10
+        self.assertEqual(jeu_pendu.enlever_tentative_si_faux(lettre, mot_secret, tentatives_restantes), 10)
 
     def test_si_mot_decouvert(self):
         jeu_pendu = Pendu()
         mot_secret = "soleil"
-        mot_masque = ["soleil"]
-        self.assertTrue(jeu_pendu.verifier_si_mot_decouvert(mot_masque,mot_secret))
+        lettres_trouvees = ["i","e","l","s","o"]
+        self.assertTrue(jeu_pendu.verifier_si_mot_decouvert(mot_secret,lettres_trouvees))
     def test_si_mot_pas_decouvert(self):
         jeu_pendu = Pendu()
-        mot_secret = "sole"
-        mot_masque = ["soleil"]
-        self.assertFalse(jeu_pendu.verifier_si_mot_decouvert(mot_masque, mot_secret))
+        mot_secret = "soleil"
+        lettres_trouvees = ["y","a","l","s","o"]
+        self.assertFalse(jeu_pendu.verifier_si_mot_decouvert(mot_secret,lettres_trouvees))
     def test_si_lettre_deja_devine(self):
         jeu_pendu = Pendu()
-        lettres_trouvee = "s"
-        lettres_devinee = ["s","b","c"]
-        self.assertTrue(jeu_pendu.verifier_si_lettre_deja_devine(lettres_trouvee,lettres_devinee))
+        lettre = "s"
+        lettres_trouvees = ["s","b","c"]
+        self.assertTrue(jeu_pendu.verifier_si_lettre_deja_devine(lettre,lettres_trouvees))
     def test_si_lettre_jamais_devine(self):
         jeu_pendu = Pendu()
-        lettres_trouvee = "a"
-        lettres_devinee = ["s","b","c"]
-        self.assertFalse(jeu_pendu.verifier_si_lettre_deja_devine(lettres_trouvee,lettres_devinee))
+        lettre = "a"
+        lettres_trouvees = ["s","b","c"]
+        self.assertFalse(jeu_pendu.verifier_si_lettre_deja_devine(lettre,lettres_trouvees))
 
 
 
